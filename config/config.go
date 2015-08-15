@@ -8,9 +8,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type Command struct {
+	Program string
+	Args    []string
+}
+
 type Dump struct {
-	Dump    string
-	Restore string
+	Dump    Command
+	Restore Command
 }
 
 type Remote struct {

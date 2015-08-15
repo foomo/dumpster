@@ -1,0 +1,16 @@
+datadir: /private/tmp
+address: 127.0.0.1:8080
+remotes:
+    myself:
+        endpoint: http://127.0.0.1:8080
+dumps:
+  dumpster:
+    dump:
+        program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
+        args:
+            - /Users/jan/go/src/github.com/foomo/dumpster
+  caproxy:
+    dump:
+        program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
+        args:
+            - /Users/jan/go/src/git.bestbytes.net/CA-Proxy

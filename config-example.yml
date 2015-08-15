@@ -1,4 +1,5 @@
 datadir: /var/www/schild-cms/var/production/dumpster
+address: :8080
 remotes:
     schild-prod:
         endpoint: https://foo:bar@schild-prod:8443

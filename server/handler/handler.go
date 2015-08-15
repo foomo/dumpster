@@ -2,14 +2,19 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/foomo/dumpster/dumpster"
 	"github.com/julienschmidt/httprouter"
 )
 
-func SetupHandlers(r *httprouter.Router) {
-	d := &Dump{}
-	d.Register(r)
+func SetupHandlers(r *httprouter.Router, d *dumpster.Dumpster) {
+	handlerDump := &Dump{
+		dumpster: d,
+	}
+	handlerDump.Register(r)
 }
 
 func jsonReply(data interface{}, w http.ResponseWriter) error {
@@ -18,5 +23,20 @@ func jsonReply(data interface{}, w http.ResponseWriter) error {
 		return err
 	}
 	w.Write(jsonBytes)
+	return nil
+}
+
+func extractJSONBodyIntoData(r *http.Request, data interface{}) error {
+	jsonBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	if len(jsonBytes) == 0 {
+		return errors.New("body was empty")
+	}
+	err = json.Unmarshal(jsonBytes, &data)
+	if err != nil {
+		return err
+	}
 	return nil
 }

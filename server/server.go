@@ -4,22 +4,29 @@ import (
 	"net/http"
 
 	"github.com/foomo/dumpster/config"
+	"github.com/foomo/dumpster/dumpster"
 	"github.com/foomo/dumpster/server/handler"
 	"github.com/julienschmidt/httprouter"
 )
 
 // Server dumpster server
 type Server struct {
-	Config *config.Config
-	Router *httprouter.Router
+	Config   *config.Config
+	Router   *httprouter.Router
+	Dumpster *dumpster.Dumpster
 }
 
 func newServer(c *config.Config) (s *Server, err error) {
-	s = &Server{
-		Config: c,
-		Router: httprouter.New(),
+	d, err := dumpster.NewDumpster(c.DataDir, c.Dumps, c.Remotes)
+	if err != nil {
+		return nil, err
 	}
-	handler.SetupHandlers(s.Router)
+	s = &Server{
+		Config:   c,
+		Router:   httprouter.New(),
+		Dumpster: d,
+	}
+	handler.SetupHandlers(s.Router, s.Dumpster)
 	return s, nil
 }
 

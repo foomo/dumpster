@@ -1,13 +1,17 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/foomo/dumpster/config"
-	"github.com/foomo/dumpster/mock"
 	"github.com/foomo/dumpster/server"
 )
 
+var flagConfig = flag.String("config", "", "where is my config")
+
 func main() {
-	c, err := config.LoadConfig(mock.GetFilename("config.yml"))
+	flag.Parse()
+	c, err := config.LoadConfig(*flagConfig)
 	if err != nil {
 		panic(err)
 	}
