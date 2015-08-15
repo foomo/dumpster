@@ -1,0 +1,8 @@
+datadir: /var/www/schild-cms/var/production/dumpster
+remotes:
+    schild-prod:
+        endpoint: https://foo:bar@schild-prod:8443
+dumps:
+  neos:
+    dump: /var/www/schild-cms/cli/neos.sh --backup
+    restore: /var/www/schild-cms/cli/neos.sh --restore
