@@ -1,0 +1,9 @@
+datadir: /tmp
+address: :8080
+dumps:
+    foo:
+        dump: echo foo >
+        restore: cat <
+remotes:
+    hansi:
+        endpoint: http://hansi/
