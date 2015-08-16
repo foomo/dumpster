@@ -166,3 +166,9 @@ Restore dump
 POST:
 
 Restore remote dump
+
+## TODO
+
+- add tests
+- daemonize
+- make some debian... packages
