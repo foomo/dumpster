@@ -31,6 +31,10 @@ type Dumpster struct {
 	Remotes map[string]config.Remote
 }
 
+var (
+	ErrNotFound = errors.New("dump not found")
+)
+
 func NewDumpster(dataDir string, dumps map[string]config.Dump, remotes map[string]config.Remote) (d *Dumpster, err error) {
 	d = &Dumpster{
 		DataDir: dataDir,
@@ -88,7 +92,7 @@ func (d *Dumpster) GetDump(dumpType, id string) (dump *Dump, err error) {
 			return dump, nil
 		}
 	}
-	return nil, errors.New("dump not found")
+	return nil, ErrNotFound
 }
 
 func (d *Dumpster) DeleteDump(dumpType, id string) error {

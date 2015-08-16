@@ -21,11 +21,22 @@ func NewRestore(dumpster *dumpster.Dumpster) *Restore {
 
 func (restore *Restore) Register(r *httprouter.Router) {
 	r.POST("/restore/:type/:id", restore.Restore)
+	r.POST("/restoreremote/:remote/:type/:id", restore.RestoreRemote)
 }
 
 // Restore a dump
 func (restore *Restore) Restore(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	restoreReport, restoreErrors, err := restore.dumpster.RestoreDump(ps.ByName("type"), ps.ByName("id"))
+	restoreReply(w, restoreReport, restoreErrors, err)
+}
+
+// Restore a dump
+func (restore *Restore) RestoreRemote(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	restoreReport, restoreErrors, err := restore.dumpster.RestoreRemoteDump(ps.ByName("remote"), ps.ByName("type"), ps.ByName("id"))
+	restoreReply(w, restoreReport, restoreErrors, err)
+}
+
+func restoreReply(w http.ResponseWriter, restoreReport string, restoreErrors string, err error) {
 	if err != nil {
 		errReply(w, http.StatusInternalServerError, err)
 		return
@@ -34,5 +45,4 @@ func (restore *Restore) Restore(w http.ResponseWriter, r *http.Request, ps httpr
 		Report: restoreReport,
 		Errors: restoreErrors,
 	}, w)
-
 }

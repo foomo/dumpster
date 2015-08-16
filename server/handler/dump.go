@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -27,6 +29,25 @@ func (d *Dump) Register(r *httprouter.Router) {
 	r.GET("/dump/:type/:id", d.Get)
 	r.DELETE("/dump/:type/:id", d.Delete)
 	r.POST("/dump/:type", d.Create)
+	r.GET("/dumpremote/:name", d.GetRemoteDumps)
+}
+
+func (d *Dump) GetRemoteDumps(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	remote, ok := d.dumpster.Remotes[ps.ByName("name")]
+	if !ok {
+		errReply(w, http.StatusNotFound, errors.New("unknown remote"))
+		return
+	}
+	response, err := http.Get(remote.EndPoint + "/dump")
+	if err != nil {
+		errReply(w, http.StatusBadGateway, err)
+		return
+	}
+	defer response.Body.Close()
+	_, err = io.Copy(w, response.Body)
+	if err != nil {
+		errReply(w, http.StatusInternalServerError, err)
+	}
 }
 
 // List available dumps
@@ -61,9 +82,11 @@ func castDumps(ddumps []*dumpster.Dump) []*responses.Dump {
 func (d *Dump) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	dump, err := d.dumpster.GetDump(ps.ByName("type"), ps.ByName("id"))
 	if err != nil {
-		// 404
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("not found"))
+		code := http.StatusInternalServerError
+		if err == dumpster.ErrNotFound {
+			code = http.StatusNotFound
+		}
+		errReply(w, code, err)
 		return
 	}
 	http.ServeFile(w, r, dump.Filename)
@@ -72,8 +95,7 @@ func (d *Dump) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 func (d *Dump) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	err := d.dumpster.DeleteDump(ps.ByName("type"), ps.ByName("id"))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		errReply(w, http.StatusInternalServerError, err)
 		return
 	}
 	w.Write([]byte("sucessfully deleted"))
@@ -83,12 +105,14 @@ func (d *Dump) Create(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	createDumpRequest := &requests.CreateDump{}
 	err := extractJSONBodyIntoData(r, createDumpRequest)
 	if err != nil {
-		panic(err)
+		errReply(w, http.StatusBadRequest, err)
+		return
 	}
 	dumpType := ps.ByName("type")
 	metaData, err := d.dumpster.CreateDump(dumpType, createDumpRequest.ID, createDumpRequest.Comment)
 	if err != nil {
-		panic(err)
+		errReply(w, http.StatusBadRequest, err)
+		return
 	}
 	jsonReply(&responses.Dump{
 		ID:      metaData.ID,

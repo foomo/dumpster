@@ -9,6 +9,10 @@ dumps:
         program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
         args:
             - /Users/jan/go/src/github.com/foomo/dumpster
+    restore:
+        program: tar
+        args:
+            - -tzvf
   caproxy:
     dump:
         program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
