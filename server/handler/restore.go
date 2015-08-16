@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/foomo/dumpster/dumpster"
@@ -26,12 +27,14 @@ func (restore *Restore) Register(r *httprouter.Router) {
 
 // Restore a dump
 func (restore *Restore) Restore(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("restoring dump", ps.ByName("type"), ps.ByName("id"))
 	restoreReport, restoreErrors, err := restore.dumpster.RestoreDump(ps.ByName("type"), ps.ByName("id"))
 	restoreReply(w, restoreReport, restoreErrors, err)
 }
 
 // Restore a dump
 func (restore *Restore) RestoreRemote(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("restoring remote dump", ps.ByName("remote"), ps.ByName("type"), ps.ByName("id"))
 	restoreReport, restoreErrors, err := restore.dumpster.RestoreRemoteDump(ps.ByName("remote"), ps.ByName("type"), ps.ByName("id"))
 	restoreReply(w, restoreReport, restoreErrors, err)
 }

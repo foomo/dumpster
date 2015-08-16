@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/foomo/dumpster/dumpster"
@@ -26,11 +27,14 @@ func jsonReply(data interface{}, w http.ResponseWriter) error {
 	if err != nil {
 		return err
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonBytes)
+	log.Println("sent json reply:", len(jsonBytes))
 	return nil
 }
 
 func errReply(w http.ResponseWriter, code int, err error) {
+	log.Println("an error occurred", code, err.Error())
 	w.WriteHeader(code)
 	w.Write([]byte(err.Error()))
 }

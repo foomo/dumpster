@@ -6,15 +6,15 @@ remotes:
 dumps:
   dumpster:
     dump:
-        program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
-        args:
-            - /Users/jan/go/src/github.com/foomo/dumpster
+      program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
+      args:
+        - /Users/jan/go/src/github.com/foomo/dumpster
     restore:
-        program: tar
-        args:
-            - -tzvf
+      program: tar
+      args:
+        - -tzvf
   caproxy:
     dump:
-        program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
-        args:
-            - /Users/jan/go/src/git.bestbytes.net/CA-Proxy
+      program: /Users/jan/go/src/github.com/foomo/dumpster/examples/files/dump.sh
+      args:
+        - /Users/jan/go/src/git.bestbytes.net/CA-Proxy

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/foomo/dumpster/config"
@@ -36,5 +37,7 @@ func Run(c *config.Config) error {
 	if err != nil {
 		return err
 	}
+	log.Println("Starting Dumpster Server on:", c.Address)
+	log.Println("  data dir:", c.DataDir)
 	return http.ListenAndServe(c.Address, s.Router)
 }

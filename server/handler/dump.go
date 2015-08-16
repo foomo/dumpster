@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -35,6 +36,7 @@ func (d *Dump) Register(r *httprouter.Router) {
 }
 
 func (d *Dump) GetRemoteDumps(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("serving remote dumps for", ps.ByName("name"))
 	remote, ok := d.dumpster.Remotes[ps.ByName("name")]
 	if !ok {
 		errReply(w, http.StatusNotFound, errors.New("unknown remote"))
@@ -65,6 +67,7 @@ func (d *Dump) GetRemoteDumps(w http.ResponseWriter, r *http.Request, ps httprou
 
 // List available dumps
 func (d *Dump) GetDumps(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("serving all dumps")
 	dumps := make(map[string][]*responses.Dump)
 	for dumpType, ddumps := range d.dumpster.GetDumps() {
 		dumps[dumpType] = castDumps(ddumps)
@@ -74,6 +77,7 @@ func (d *Dump) GetDumps(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 
 // List available dumps
 func (d *Dump) GetDumpsForType(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("serving dumps for type", ps.ByName("type"))
 	jsonReply(d.dumpster.GetDumpsForType(ps.ByName("type")), w)
 }
 
@@ -93,6 +97,7 @@ func castDumps(ddumps []*dumpster.Dump) []*responses.Dump {
 }
 
 func (d *Dump) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("serving dump", ps.ByName("type"), ps.ByName("id"))
 	dump, err := d.dumpster.GetDump(ps.ByName("type"), ps.ByName("id"))
 	if err != nil {
 		code := http.StatusInternalServerError
@@ -106,6 +111,7 @@ func (d *Dump) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func (d *Dump) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("deleting dump", ps.ByName("type"), ps.ByName("id"))
 	err := d.dumpster.DeleteDump(ps.ByName("type"), ps.ByName("id"))
 	if err != nil {
 		errReply(w, http.StatusInternalServerError, err)
@@ -115,13 +121,15 @@ func (d *Dump) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 }
 
 func (d *Dump) Create(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	dumpType := ps.ByName("type")
+	log.Println("creating dump in", dumpType)
 	createDumpRequest := &requests.CreateDump{}
 	err := extractJSONBodyIntoData(r, createDumpRequest)
 	if err != nil {
 		errReply(w, http.StatusBadRequest, err)
 		return
 	}
-	dumpType := ps.ByName("type")
+
 	metaData, err := d.dumpster.CreateDump(dumpType, createDumpRequest.ID, createDumpRequest.Comment)
 	if err != nil {
 		errReply(w, http.StatusBadRequest, err)
@@ -134,10 +142,6 @@ func (d *Dump) Create(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		Errors:  metaData.Errors,
 		Path:    getPath(metaData.Type, metaData.ID),
 	}, w)
-}
-
-func (d *Dump) Restore(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
 }
 
 func getPath(dumpType string, id string) string {
