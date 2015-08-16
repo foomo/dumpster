@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -43,6 +44,10 @@ func NewDumpster(dataDir string, dumps map[string]config.Dump, remotes map[strin
 	}
 	// try to create dump dirs
 	for dumpType := range d.Dumps {
+		dumpTypeValidationErr := validatePathPart(dumpType)
+		if dumpTypeValidationErr != nil {
+			return nil, errors.New("invalid dump type: " + dumpType + " error: " + dumpTypeValidationErr.Error())
+		}
 		dumpDir := d.getDumpDir(dumpType)
 		err := os.MkdirAll(dumpDir, 0777)
 		if err != nil {
@@ -118,4 +123,14 @@ func (d *Dumpster) getDumpFileNames(dumpType string, id string) (dumpFile string
 
 func (d *Dumpster) getDumpDir(dumpType string) string {
 	return path.Join(d.DataDir, dumpType)
+}
+
+const pathRuleRegex = `^([a-z]|[A-Z]|[0-9]|[\-_])+$`
+
+func validatePathPart(part string) error {
+	var validateID = regexp.MustCompile(pathRuleRegex)
+	if !validateID.MatchString(part) {
+		return errors.New("forbidden input - does not match: " + pathRuleRegex)
+	}
+	return nil
 }

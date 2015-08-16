@@ -11,6 +11,10 @@ import (
 
 // CreateDump creates a dump, by calling the configured dump program
 func (d *Dumpster) CreateDump(dumpType string, id string, comment string) (metaData *Dump, err error) {
+	idValidationErr := validatePathPart(id)
+	if idValidationErr != nil {
+		return nil, errors.New("i do not like that id, it must match " + pathRuleRegex)
+	}
 	dumpFilename, metaDataFilename := d.getDumpFileNames(dumpType, id)
 	dumpConfig, ok := d.Dumps[dumpType]
 	if !ok {
