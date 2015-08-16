@@ -11,3 +11,9 @@ type Dump struct {
 	Comment string
 	Path    string
 }
+
+// RestoreReport a report of a dump restoration
+type RestoreReport struct {
+	Report string
+	Errors string
+}

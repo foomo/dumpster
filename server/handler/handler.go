@@ -15,6 +15,10 @@ func SetupHandlers(r *httprouter.Router, d *dumpster.Dumpster) {
 		dumpster: d,
 	}
 	handlerDump.Register(r)
+	handlerRestore := &Restore{
+		dumpster: d,
+	}
+	handlerRestore.Register(r)
 }
 
 func jsonReply(data interface{}, w http.ResponseWriter) error {
@@ -24,6 +28,11 @@ func jsonReply(data interface{}, w http.ResponseWriter) error {
 	}
 	w.Write(jsonBytes)
 	return nil
+}
+
+func errReply(w http.ResponseWriter, code int, err error) {
+	w.WriteHeader(code)
+	w.Write([]byte(err.Error()))
 }
 
 func extractJSONBodyIntoData(r *http.Request, data interface{}) error {
