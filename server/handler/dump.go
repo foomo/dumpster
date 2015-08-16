@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
-	"io"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -44,10 +46,21 @@ func (d *Dump) GetRemoteDumps(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 	defer response.Body.Close()
-	_, err = io.Copy(w, response.Body)
+	responseBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		errReply(w, http.StatusInternalServerError, err)
 	}
+	dumps := make(map[string][]*responses.Dump)
+	filteredDumps := make(map[string][]*responses.Dump)
+	err = json.Unmarshal(responseBytes, &dumps)
+	for dumpType, remoteDumps := range dumps {
+		w.Write([]byte(fmt.Sprintln(dumpType, remoteDumps)))
+		dumpConfig, ok := d.dumpster.Dumps[dumpType]
+		if ok && len(dumpConfig.Restore.Program) > 0 {
+			filteredDumps[dumpType] = remoteDumps
+		}
+	}
+	jsonReply(filteredDumps, w)
 }
 
 // List available dumps
