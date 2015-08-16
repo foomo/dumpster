@@ -2,6 +2,10 @@
 
 _Dump project data and restore them_
 
+![Image dumpster from wikipedia](https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Dumpsters_in_Anaktuvuk_Pass%2C_Alaska.jpg/440px-Dumpsters_in_Anaktuvuk_Pass%2C_Alaska.jpg)
+
+<small>image &copy; [Paxson Woelber](https://en.wikipedia.org/wiki/Dumpster#/media/File:Dumpsters_in_Anaktuvuk_Pass,_Alaska.jpg)</small>
+
 Dumpster allows you to define dumps. **A dump is genrated by a program**, that
 will write the dump into a file and another program that will be able to
 **restore** the previously created dump from that file.
