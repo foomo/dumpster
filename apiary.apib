@@ -73,4 +73,22 @@ Create, get, delete and restore (remote) dumps.
 + Response 400 (text/plain)
 
         can not find this dump type: invalid-dump-type
+        
 
+## dumps [/dump/{dumpType}/{id}]
+
+### Get a dump [GET]
+
++ Response 200 (application/octet-stream)
+
+        binary contents of a dump
+
++ Response 404 (text/plain)
+
+        dump not found
+
+### Delete a dump [DELETE]
+
++ Response 200 (text/plain)
+
+        successfully deleted
