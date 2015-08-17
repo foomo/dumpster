@@ -1,0 +1,76 @@
+FORMAT: 1A
+HOST: http://127.0.0.1:8080/
+
+# dumpster
+
+Create, get, delete and restore (remote) dumps.
+
+## dumps [/dumps]
+
+### get a dict of all dumps [GET]
+
++ Response 200 (application/json)
+
+        {
+           "dumpster": [
+              {
+                 "id"      : "foo",
+                 "created" : "2015-08-16T12:36:51.343245398+02:00",
+                 "report"  : "i will dump a folder: /home/jan/go/src/github.com/foomo/dumpster into: /private/tmp/dumpster/foo\ndone\n-rw-r--r--  1 jan   2.0M Aug 16 12:36 /private/tmp/dumpster/foo\n",
+                 "errors"  : "tar: Removing leading '/' from member names\n",
+                 "comment" : "a test",
+                 "path"    : "/dump/dumpster/foo"
+              }
+          ],
+          "projectx": []
+        }
+
+## dumps of type [/dump/{dumpType}]
+
+### get a list of all dumps of a dumpType [GET]
+
++ Response 200 (application/json)
+
+        [
+              {
+                 "id"      : "foo",
+                 "created" : "2015-08-16T12:36:51.343245398+02:00",
+                 "report"  : "i will dump a folder: /home/jan/go/src/github.com/foomo/dumpster into: /private/tmp/dumpster/foo\ndone\n-rw-r--r--  1 jan   2.0M Aug 16 12:36 /private/tmp/dumpster/foo\n",
+                 "errors"  : "tar: Removing leading '/' from member names\n",
+                 "comment" : "a test",
+                 "path"    : "/dump/dumpster/foo"
+              },
+              {
+                 "id"      : "bar",
+                 "created" : "2015-08-16T12:36:51.343245398+02:00",
+                 "report"  : "bar report",
+                 "errors"  : "",
+                 "comment" : "another test",
+                 "path"    : "/dump/dumpster/bar"
+              }
+        ]
+
+### Create a dump [POST]
+
++ Request (application/json)
+
+        {
+            id: "foo-100",
+            comment: "another foo dump"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "id"      : "foo-100",
+            "created" : "2015-08-16T12:36:51.343245398+02:00",
+            "report"  : "foo 100 is such a lame name",
+            "errors"  : "",
+            "comment" : "my first dump",
+            "path"    : "/dump/dumpster/foo-100"
+        }
+
++ Response 400 (text/plain)
+
+        can not find this dump type: invalid-dump-type
+
