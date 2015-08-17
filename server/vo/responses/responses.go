@@ -4,12 +4,14 @@ import "time"
 
 // Dump info
 type Dump struct {
-	ID      string    `json:"id"`
-	Created time.Time `json:"created"`
-	Report  string    `json:"report"`
-	Errors  string    `json:"errors"`
-	Comment string    `json:"comment"`
-	Path    string    `json:"path"`
+	ID       string    `json:"id"`
+	DumpType string    `json:"dumpType"`
+	Created  time.Time `json:"created"`
+	Report   string    `json:"report"`
+	Errors   string    `json:"errors"`
+	Comment  string    `json:"comment"`
+	Path     string    `json:"path"`
+	Remote   string    `json:"remote,omitempty"`
 }
 
 // RestoreReport a report of a dump restoration

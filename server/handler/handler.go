@@ -33,8 +33,16 @@ func jsonReply(data interface{}, w http.ResponseWriter) error {
 	return nil
 }
 
+func textReply(w http.ResponseWriter, code int, text string) {
+	log.Println("sent text reply", code, text)
+	w.WriteHeader(code)
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(text))
+}
+
 func errReply(w http.ResponseWriter, code int, err error) {
 	log.Println("an error occurred", code, err.Error())
+	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(code)
 	w.Write([]byte(err.Error()))
 }

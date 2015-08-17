@@ -86,6 +86,8 @@ remotes:
 
 ## REST interface
 
+There is a fairly extensive documentation [http://docs.dumpster.apiary.io/](http://docs.dumpster.apiary.io/)
+
 A little curl guide
 
 ```bash
@@ -101,6 +103,9 @@ curl -X POST -d '{ "id" : "my-first-dump", "comment" : "what a great day ..." }'
 # restore a dump of type "dumpster" with id "my-first-dump"
 curl -X POST 127.0.0.1:8080/restore/dumpster/my-first-dump
 
+# list all remote dumps
+curl 127.0.0.1:8080/dumpremote
+
 # list remote dumps on server "myself"
 curl 127.0.0.1:8080/dumpremote/myself
 
@@ -108,68 +113,6 @@ curl 127.0.0.1:8080/dumpremote/myself
 curl -X POST 127.0.0.1:8080/restoreremote/myself/dumpster/my-first-dump
 
 ```
-
-### /dump
-
-Lists available dumps
-
-GET:
-
-```json
-{
-   "dumpster": [
-      {
-         "id"      : "foo",
-         "created" : "2015-08-16T12:36:51.343245398+02:00",
-         "report"  : "i will dump a folder: /home/jan/go/src/github.com/foomo/dumpster into: /private/tmp/dumpster/foo\ndone\n-rw-r--r--  1 jan   2.0M Aug 16 12:36 /private/tmp/dumpster/foo\n",
-         "errors"  : "tar: Removing leading '/' from member names\n",
-         "comment" : "a test",
-         "path"    : "/dump/dumpster/foo"
-      }
-  ],
-  "projectx": []
-}
-```
-
-### /dump/&lt;type&gt;
-
-GET:
-
-Lists dumps of the given type
-
-POST:
-
-Create a dump
-
-```json
-{
-    "id"      : "last-before-update-xxx",
-    "comment" : "last dump before upgrade with tag foo bar"
-}
-```
-
-
-### /dump/&lt;type&gt;/&lt;id&gt;
-
-GET:
-
-Download binary dump file
-
-DELETE:
-
-Delete dump
-
-### /restore/&lt;type&gt;/&lt;id&gt;
-
-POST:
-
-Restore dump
-
-### /restoreremote/&lt;remoteName&gt;/type&gt;/&lt;id&gt;
-
-POST:
-
-Restore remote dump
 
 ## TODO
 

@@ -33,7 +33,9 @@ type Dumpster struct {
 }
 
 var (
-	ErrNotFound = errors.New("dump not found")
+	ErrRemoteNotFound   = errors.New("remote not found")
+	ErrDumpNotFound     = errors.New("dump not found")
+	ErrDumpTypeNotFound = errors.New("dump type not found")
 )
 
 func NewDumpster(dataDir string, dumps map[string]config.Dump, remotes map[string]config.Remote) (d *Dumpster, err error) {
@@ -60,15 +62,22 @@ func NewDumpster(dataDir string, dumps map[string]config.Dump, remotes map[strin
 func (d *Dumpster) GetDumps() map[string][]*Dump {
 	dumps := make(map[string][]*Dump)
 	for dumpType := range d.Dumps {
-		dumps[dumpType] = d.GetDumpsForType(dumpType)
+		dumpTypeDumps, err := d.GetDumpsForType(dumpType)
+		if err == nil {
+			dumps[dumpType] = dumpTypeDumps
+		}
 	}
 	return dumps
 }
 
-func (d *Dumpster) GetDumpsForType(dumpType string) []*Dump {
+func (d *Dumpster) GetDumpsForType(dumpType string) (dumps []*Dump, err error) {
+	_, dumpTypeExists := d.Dumps[dumpType]
+	if !dumpTypeExists {
+		return nil, ErrDumpTypeNotFound
+	}
 	dumpDir := d.getDumpDir(dumpType)
 	files, err := ioutil.ReadDir(dumpDir)
-	dumps := []*Dump{}
+	dumps = []*Dump{}
 	if err == nil {
 		for _, file := range files {
 			if strings.HasPrefix(file.Name(), metaPrefix) {
@@ -88,16 +97,20 @@ func (d *Dumpster) GetDumpsForType(dumpType string) []*Dump {
 			}
 		}
 	}
-	return dumps
+	return dumps, nil
 }
 
 func (d *Dumpster) GetDump(dumpType, id string) (dump *Dump, err error) {
-	for _, dump := range d.GetDumpsForType(dumpType) {
+	dumps, err := d.GetDumpsForType(dumpType)
+	if err != nil {
+		return nil, err
+	}
+	for _, dump := range dumps {
 		if dump.ID == id {
 			return dump, nil
 		}
 	}
-	return nil, ErrNotFound
+	return nil, ErrDumpNotFound
 }
 
 func (d *Dumpster) DeleteDump(dumpType, id string) error {
