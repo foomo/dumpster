@@ -5,52 +5,26 @@ HOST: http://127.0.0.1:8080/
 
 Create, get, delete and restore (remote) dumps.
 
-## dumps [/dumps]
+# Group dumps
 
-### get a dict of all dumps [GET]
 
-+ Response 200 (application/json)
 
-        {
-           "dumpster": [
-              {
-                 "id"      : "foo",
-                 "created" : "2015-08-16T12:36:51.343245398+02:00",
-                 "report"  : "i will dump a folder: /home/jan/go/src/github.com/foomo/dumpster into: /private/tmp/dumpster/foo\ndone\n-rw-r--r--  1 jan   2.0M Aug 16 12:36 /private/tmp/dumpster/foo\n",
-                 "errors"  : "tar: Removing leading '/' from member names\n",
-                 "comment" : "a test",
-                 "path"    : "/dump/dumpster/foo"
-              }
-          ],
-          "projectx": []
-        }
+# dumps [/dumps]
 
-## dumps of type [/dump/{dumpType}]
 
-### get a list of all dumps of a dumpType [GET]
+## get a dict of all dumps [GET]
 
 + Response 200 (application/json)
+    + Attributes (DumpDict)
 
-        [
-              {
-                 "id"      : "foo",
-                 "created" : "2015-08-16T12:36:51.343245398+02:00",
-                 "report"  : "i will dump a folder: /home/jan/go/src/github.com/foomo/dumpster into: /private/tmp/dumpster/foo\ndone\n-rw-r--r--  1 jan   2.0M Aug 16 12:36 /private/tmp/dumpster/foo\n",
-                 "errors"  : "tar: Removing leading '/' from member names\n",
-                 "comment" : "a test",
-                 "path"    : "/dump/dumpster/foo"
-              },
-              {
-                 "id"      : "bar",
-                 "created" : "2015-08-16T12:36:51.343245398+02:00",
-                 "report"  : "bar report",
-                 "errors"  : "",
-                 "comment" : "another test",
-                 "path"    : "/dump/dumpster/bar"
-              }
-        ]
+# dumps of type [/dump/{dumpType}]
 
-### Create a dump [POST]
+## get a list of all dumps of dumpType [GET]
+
++ Response 200 (application/json)
+    + Attributes (array[Dump])
+
+## Create a dump [POST]
 
 + Request (application/json)
 
@@ -60,6 +34,7 @@ Create, get, delete and restore (remote) dumps.
         }
 
 + Response 200 (application/json)
+    + Attributes (Dump)
 
         {
             "id"      : "foo-100",
@@ -69,15 +44,15 @@ Create, get, delete and restore (remote) dumps.
             "comment" : "my first dump",
             "path"    : "/dump/dumpster/foo-100"
         }
-
+        
 + Response 400 (text/plain)
 
         can not find this dump type: invalid-dump-type
         
 
-## dumps [/dump/{dumpType}/{id}]
+# dumps [/dump/{dumpType}/{id}]
 
-### Get a dump [GET]
+## Get a dump [GET]
 
 + Response 200 (application/octet-stream)
 
@@ -87,8 +62,29 @@ Create, get, delete and restore (remote) dumps.
 
         dump not found
 
-### Delete a dump [DELETE]
+## Delete a dump [DELETE]
 
 + Response 200 (text/plain)
 
         successfully deleted
+        
+# Data Structures
+
+## Dump (object)
+
++ id       : "foo" (string, required) - a unique id set by the api user
++ created  : "2015-08-16T12:36:51.343245398+02:00" (string) - timestamp
++ report   : "foo 100 is such a lame name" (string)
++ errors   : ""
++ comment  : "my first dump",
++ path"    : "/dump/dumpster/foo-100"
+
+## DumpDict (array[Dump])
+
+
+
+
+
+
+
+
