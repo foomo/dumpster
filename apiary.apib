@@ -5,26 +5,74 @@ HOST: http://127.0.0.1:8080/
 
 Create, get, delete and restore (remote) dumps.
 
-# Group dumps
+# Group local dumps
+
+# Dump [/dump/{dumpType}/{id}]
+
+## Get a dump [GET]
+
+Download an existing dump for example as backup. Be aware, that this might be a lot of data.
+
++ Response 200 (application/octet-stream)
+
+        binary contents of a dump
+
++ Response 404 (text/plain)
+
+        dump not found
+        
++ Response 404 (text/plain)
+
+        dump type not found
+
+
+## Delete a dump [DELETE]
+
+Be warned - it will be gone for good.
+
++ Response 200 (text/plain)
+
+        successfully deleted
+
++ Response 404 (text/plain)
+
+        dump not found
+        
++ Response 404 (text/plain)
+
+        dump type not found
 
 
 
 # dumps [/dumps]
 
+## get a list of all dumps [GET]
 
-## get a dict of all dumps [GET]
-
-+ Response 200 (application/json)
-    + Attributes (DumpDict)
-
-# dumps of type [/dump/{dumpType}]
-
-## get a list of all dumps of dumpType [GET]
+Get a list of all local dumps of any dumpType.
 
 + Response 200 (application/json)
+
     + Attributes (array[Dump])
 
+# dumps of a type [/dump/{dumpType}]
+
+## all dumps of {dumpType} [GET]
+
+Get a list of all dumps of a given dump type.
+
++ Response 200 (application/json)
+
+    + Attributes (array[Dump])
+    
+
++ Response 404 (text/plain)
+
+        dump type not found
+
+
 ## Create a dump [POST]
+
+Create a dump - this is a synchronous operation and be aware, that this might take a while i.e. take good care of your client not to timeout.
 
 + Request (application/json)
 
@@ -34,39 +82,78 @@ Create, get, delete and restore (remote) dumps.
         }
 
 + Response 200 (application/json)
+    
     + Attributes (Dump)
+    
+    + Body
 
-        {
-            "id"      : "foo-100",
-            "created" : "2015-08-16T12:36:51.343245398+02:00",
-            "report"  : "foo 100 is such a lame name",
-            "errors"  : "",
-            "comment" : "my first dump",
-            "path"    : "/dump/dumpster/foo-100"
-        }
+            {
+                "id"      : "foo-100",
+                "created" : "2015-08-16T12:36:51.343245398+02:00",
+                "report"  : "foo 100 is such a lame name",
+                "errors"  : "",
+                "comment" : "my first dump",
+                "path"    : "/dump/dumpster/foo-100"
+            }
         
 + Response 400 (text/plain)
 
         can not find this dump type: invalid-dump-type
         
+# Group remote dumps
 
-# dumps [/dump/{dumpType}/{id}]
+# listing remote dumps [/dumpremote]
 
-## Get a dump [GET]
+## list them [GET]
 
-+ Response 200 (application/octet-stream)
++ Response 200 (application/json)
 
-        binary contents of a dump
+    + Attributes (array[Dump])
+    
+# list all remote dumps of remoteName [/dumpremote/{remoteName}]
+
+## list remote dumps for remote {remoteName} [GET]
+    
++ Response 200 (application/json)
+
+    + Attributes (array[Dump])
 
 + Response 404 (text/plain)
 
-        dump not found
+        unknown remote
 
-## Delete a dump [DELETE]
++ Response 502 (text/plain)
 
-+ Response 200 (text/plain)
+        can not reach remote server
+        
+# Group restoring dumps
 
-        successfully deleted
+# local dumps [/restore/{dumpType}/{id}]
+        
+## restore dump [POST]
+
+restore a local dump
+    
++ Response 200 (application/json)
+
+    + Attributes (RestoreReport)
+
+# remote dumps [/restoreremote/{remoteName}/{dumpType}/{id}]
+        
+## restore remote dump [POST]
+
+restore a remote dump locally
+    
++ Response 200 (application/json)
+
+    + Attributes (RestoreReport)
+    
+    + Body
+    
+            {
+                "Report" : "restored a lot of things",
+                "Errors" : ""
+            }
         
 # Data Structures
 
@@ -76,14 +163,14 @@ Create, get, delete and restore (remote) dumps.
 + created  : "2015-08-16T12:36:51.343245398+02:00" (string) - timestamp
 + report   : "foo 100 is such a lame name" (string)
 + errors   : ""
++ dumpType : "bar" - name of the dump type
 + comment  : "my first dump",
 + path"    : "/dump/dumpster/foo-100"
 
-## DumpDict (array[Dump])
+## RestoreReport
 
-
-
-
++ Report   : "" - stdout output during restore
++ Errors   : "" - stderror output during restore
 
 
 
