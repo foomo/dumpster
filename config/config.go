@@ -22,6 +22,15 @@ type Remote struct {
 	EndPoint string "endpoint"
 }
 
+type HTTP struct {
+	Address string
+	TLS     struct {
+		Address string
+		Cert    string
+		Key     string
+	}
+}
+
 type Config struct {
 	Address string
 	DataDir string "datadir"
