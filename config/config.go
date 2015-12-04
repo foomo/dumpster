@@ -23,8 +23,9 @@ type Remote struct {
 }
 
 type HTTP struct {
-	Address string
-	TLS     struct {
+	BasicAuthFile string "basicauthfile"
+	Address       string
+	TLS           *struct {
 		Address string
 		Cert    string
 		Key     string
@@ -32,7 +33,7 @@ type HTTP struct {
 }
 
 type Config struct {
-	Address string
+	HTTP    HTTP
 	DataDir string "datadir"
 	Dumps   map[string]Dump
 	Remotes map[string]Remote
