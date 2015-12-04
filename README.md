@@ -18,8 +18,20 @@ dumps locally**. Common use cases are backups and development.
 
 ## Security
 
-Dumpster has **no security mechanisms built in**! You have to be very careful on
-how to make it accessible and with which privileges you will let it run.
+Dumpster supports basic auth - that is it (only use over https!). You have to be very careful on how to make it accessible and **with which privileges you will let it run**.
+
+### A few notes on basic auth
+
+Do not use basic auth over http it is not secure!
+
+How to create a htpasswd file
+
+```bash
+# create a new htpasswd file with bcrypt as the hashing algo and add user mr foo
+htpasswd -c -B /path/to/file mister-foo
+```
+
+Since this program is using Lev Shamardins go-http-auth https://github.com/abbot/go-http-auth it will check, if the htpasswd file has changed.
 
 ## Dump and restore programs
 
@@ -51,7 +63,16 @@ Dumpsters config is a yaml file:
 
 ```yaml
 # this is where I listen and provide a REST interface
-address: 127.0.0.1:8080
+http:
+  # create a new htpasswd file and use bcrypt as the hashing mechanism
+  # htpassd -c -B /path/to/basic/auth/file <username>
+  basicauthfile: /path/to/basic/auth/file
+  # http for debugging do not use in production
+  address: 127.0.0.1:8080
+  tls:
+    address: www.my-dumpster.com:8443
+    cert: /path/to/cert.file
+    key: /path/to/key/file
 # a directory to put my data, those are plain files in a simple data structure
 datadir: /var/lib/dumpster
 # these are my dumps, which is what I am all about

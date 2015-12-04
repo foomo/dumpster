@@ -1,5 +1,11 @@
+http:
+  address: 127.0.0.1:8080
+  tls:
+    address: 127.0.0.1:8443
+    cert: /Users/jan/vagrant/schild/ssl/bestbytes_net.crt
+    key: /Users/jan/vagrant/schild/ssl/bestbytes_net.key
+  basicauthfile: /Users/jan/go/src/github.com/foomo/dumpster/examples/users
 datadir: /private/tmp
-address: 127.0.0.1:8080
 remotes:
     myself:
         endpoint: http://127.0.0.1:8080
