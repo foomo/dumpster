@@ -62,9 +62,10 @@ func NewDumpster(dataDir string, dumps map[string]config.Dump, remotes map[strin
 func (d *Dumpster) GetDumps() map[string][]*Dump {
 	dumps := make(map[string][]*Dump)
 	for dumpType := range d.Dumps {
+		dumps[dumpType] = []*Dump{}
 		dumpTypeDumps, err := d.GetDumpsForType(dumpType)
 		if err == nil {
-			dumps[dumpType] = dumpTypeDumps
+			dumps[dumpType] = append(dumps[dumpType], dumpTypeDumps...)
 		}
 	}
 	return dumps
