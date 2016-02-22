@@ -1,5 +1,6 @@
 FROM scratch
 
-ADD $GOPATH/bin/dumpster /bin/dumpster
+RUN mkdir -p /bin
+ADD /go/bin/dumpster /bin/dumpster
 
 ENTRYPOINT ["/bin/dumpster"]
