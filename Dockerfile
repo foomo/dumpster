@@ -1,5 +1,5 @@
 FROM scratch
 
-ADD /go/bin/dumpster /bin/dumpster
+ADD dumpster /bin/dumpster
 
 ENTRYPOINT ["/bin/dumpster"]
